@@ -1,4 +1,5 @@
 require 'origen'
+require 'origen_testers'
 require_relative '../config/application.rb'
 module OrigenSpi
   # THIS FILE SHOULD ONLY BE USED TO LOAD RUNTIME DEPENDENCIES

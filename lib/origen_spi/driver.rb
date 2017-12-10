@@ -63,6 +63,9 @@ module OrigenSpi
     #   spi_instance.data_order = :lsb0
     attr_reader :data_order
 
+    # internal attribute
+    attr_reader :settings_validated
+
     # options hash can configure
     #
     # @example
@@ -169,7 +172,7 @@ module OrigenSpi
 
     # Check settings
     def validate_settings
-      unless @settings_valid
+      unless @settings_validated
         settings_valid = true
 
         # check that clock and miso are provided
