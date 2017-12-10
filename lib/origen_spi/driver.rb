@@ -25,7 +25,6 @@ module OrigenSpi
     # clock format
     #
     # available options are:
-    #   :nr   # non-return
     #   :rl   # return low
     #   :rh   # return high
     #
@@ -72,7 +71,7 @@ module OrigenSpi
     #     mosi_pin: dut.pin(:p2),
     #     miso_pin: dut.pin(:p3),
     #     ss_pin: dut.pin(:p4),
-    #     clk_format: :nr,
+    #     clk_format: :rl,
     #     ss_active: 0,
     #     clk_wait_time: {time_in_cycles: 2},
     #     clk_multiple: 2,
@@ -131,7 +130,7 @@ module OrigenSpi
         @clk_format = format
       else
         Origen.log.error "Invalid clock format for OrigenSpi::Driver -> #{format}"
-        Origen.log.error 'Valid formats are :nr, :rl, :rh'
+        Origen.log.error 'Valid formats are :rl, :rh'
       end
       @settings_validated = false
     end
@@ -166,6 +165,81 @@ module OrigenSpi
       else
         Origen.log.error "Invalid OrigenSpi::Driver.data_order -> #{order}, (use :msb0 or :lsb0)"
       end
+    end
+
+    # Check settings
+    def validate_settings
+      unless @settings_valid
+        settings_valid = true
+
+        # check that clock and miso are provided
+        unless @sclk_pin.is_a?(Origen::Pins::Pin)
+          settings_valid = false
+          Origen.log.error 'OrigenSpi::Driver.sclk_pin must be an Origen pin object'
+        end
+        unless @miso_pin.is_a?(Origen::Pins::Pin)
+          settings_valid = false
+          Origen.log.error 'OrigenSpi::Driver.miso_pin must be an Origen pin object'
+        end
+
+        unless @clk_format == :rl || @clk_format == :rh
+          settings_valid = false
+          Origen.log.error 'OrigenSpi::Driver.clk_format must be one of :rl, :rh'
+        end
+
+        unless @ss_active == 0 || @ss_active == 1
+          settings_valid = false
+          Origen.log.error 'OrigenSpi::Driver.ss_active must be either 0 or 1'
+        end
+
+        @clk_multiple = 1 if @clk_multiple < 1
+
+        @miso_compare_cycle = @clk_multiple - 1 if @miso_compare_cycle > @clk_multiple - 1
+
+        unless @data_order == :msb0 || @data_order == :lsb0
+          settings_valid = false
+          Origen.log.error 'OrigenSpi::Driver.data_order must be either :msb0 or :lsb0'
+        end
+
+        @settings_validated = settings_valid
+      end
+    end
+
+    # Run a spi clock cycle
+    #
+    # This method can be used to clock the spi port without specifying shift data
+    def clock_cycle
+      validate_settings
+    end
+
+    # Shift a spi packet
+    #
+    # Overlay and capture is specified through reg.overlay and reg.store
+    #
+    # @example
+    #   spi_instance.shift master_out: out_reg, master_in: in_cmp_reg
+    # @example
+    #   spi_instance.shift master_out: 0x7a, size: 32
+    # @example
+    #   spi_instance.shift master_in: in_cmp_reg
+    def shift(options = {})
+      options = {
+        master_out: 0
+      }.merge(options)
+
+      validate_settings
+    end
+
+    # Build the shift out packet
+    #
+    # This is an internal method used by the shift method
+    def build_output_packet(options)
+    end
+
+    # Build the input packet
+    #
+    # This is an internal method used by the shift method
+    def build_input_packet(options)
     end
   end
 end
