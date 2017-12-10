@@ -32,6 +32,12 @@ describe OrigenSpi::Driver do
     spi_ins.mosi_pin.name.to_s.should == 'mosi'
     spi_ins.miso_pin.name.to_s.should == 'miso'
     spi_ins.ss_pin.name.to_s.should == 'ss'
+    spi_ins.clk_format.should == :rl
+    spi_ins.clk_multiple.should == 1
+    spi_ins.data_order.should == :lsb0
+    
+    spi_ins.validate_settings
+    spi_ins.settings_validated.should == true
   end
 
 end

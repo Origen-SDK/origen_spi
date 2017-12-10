@@ -99,7 +99,7 @@ module OrigenSpi
       @mosi_pin = options[:mosi_pin]
       @miso_pin = options[:miso_pin]
       @ss_pin = options[:ss_pin]
-      @clk_format = options[clk_format]
+      @clk_format = options[:clk_format]
       @ss_active = options[:ss_active]
       @clk_wait_time = options[:clk_wait_time]
       @clk_multiple = options[:clk_multiple]
