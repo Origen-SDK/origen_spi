@@ -39,5 +39,27 @@ describe OrigenSpi::Driver do
     spi_ins.validate_settings
     spi_ins.settings_validated.should == true
   end
+  
+  specify 'attributes can be updated causing re-validate' do
+    Origen.target.temporary = -> { TestDUT.new; OrigenTesters::J750.new }
+    Origen.target.load!
+    settings = {
+      sclk_pin: dut.pin(:sclk),
+      mosi_pin: dut.pin(:mosi),
+      miso_pin: dut.pin(:miso),
+      ss_pin: dut.pin(:ss),
+      clk_format: :rl,
+      ss_active: 0,
+      clk_multiple: 1,
+      data_order: :lsb0
+    }
+    
+    spi_ins = OrigenSpi::Driver.new(settings)
+    spi_ins.validate_settings
+    spi_ins.settings_validated.should == true
+    spi_ins.clk_multiple = 8
+    spi_ins.clk_multiple.should == 8
+    spi_ins.settings_validated.should == false
+  end
 
 end

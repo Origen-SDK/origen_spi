@@ -231,18 +231,56 @@ module OrigenSpi
       }.merge(options)
 
       validate_settings
+      options = validate_options(options)
+      out_reg = build_output_packet(options)
+      in_reg = build_input_packet(options)
+      
+      # now do the shifting
     end
 
     # Build the shift out packet
     #
     # This is an internal method used by the shift method
     def build_output_packet(options)
+      out_reg = Origen::Registers::Reg.dummy(options[:size])
+      if options[:master_out].respond_to?(:data)
+        out_reg.copy_all(options[:master_out])
+      else
+        out_reg.write options[:master_out]
+      end
+      out_reg
     end
 
     # Build the input packet
     #
     # This is an internal method used by the shift method
     def build_input_packet(options)
+      in_reg = Origen::Registers::Reg.dummy(options[:size])
+      if options[:master_in].respond_to?(:data)
+        in_reg.copy_all(options[:master_in])
+      else
+        unless options[:master_in].nil?
+          in_reg.write options[:master_in]
+          in_reg.read
+        end
+      end
+      in_reg
+    end
+    
+    # Internal method that logs errors in options passed to the shift method
+    def validate_options(options)
+      # check that size of the packet can be determined
+      unless options[:size]
+        options[:size] = options[:master_in].size if options[:master_in].respond_to?(:data)
+      end
+      unless options[:size]
+        options[:size] = options[:master_out].size if options[:master_out].respond_to?(:data)
+      end
+      unless options[:size]
+        Origen.log.error "OrigenSpi::Driver can't determine the packet size"
+        exit
+      end
+      options
     end
   end
 end
