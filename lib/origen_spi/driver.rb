@@ -1,5 +1,7 @@
 module OrigenSpi
   class Driver
+    include Origen::Model
+  
     # Dut pin that serves as the spi clock
     # @example
     #   spi_instance.sclk_pin = dut.pin(:p1)
@@ -196,6 +198,7 @@ module OrigenSpi
         end
 
         @clk_multiple = 1 if @clk_multiple < 1
+        @half_cycle = @clk_multiple / 2
 
         @miso_compare_cycle = @clk_multiple - 1 if @miso_compare_cycle > @clk_multiple - 1
 
@@ -213,6 +216,15 @@ module OrigenSpi
     # This method can be used to clock the spi port without specifying shift data
     def clock_cycle
       validate_settings
+      cc 'OrigenSpi::Driver - Issue a clock cycle'
+      @sclk_pin.restore_state do
+        @sclk_pin.drive @clk_format == :rl ? 0 : 1
+        @half_cycle.times { tester.cycle } unless @half_cycle == 0
+        @sclk_pin.drive @clk_format == :rl ? 1 : 0
+        @half_cycle.times { tester.cycle } unless @half_cycle == 0
+        # ensure at least 1 cycles is issued
+        tester.cycle if @clk_multiple == 1
+      end
     end
 
     # Shift a spi packet

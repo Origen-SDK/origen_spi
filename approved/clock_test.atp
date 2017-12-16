@@ -1,0 +1,65 @@
+// ***************************************************************************
+// GENERATED:
+//   Time:    16-Dec-2017 16:12PM
+//   By:      Paul DeRouen
+//   Command: origen g pattern\clock_test.rb -t default.rb -e default.rb
+// ***************************************************************************
+// ENVIRONMENT:
+//   Application
+//     Source:    https://github.com/Origen-SDK/origen_spi.git
+//     Version:   0.1.0
+//     Branch:    master(3b91a6a4547) (+local edits)
+//   Origen
+//     Source:    https://github.com/Origen-SDK/origen
+//     Version:   0.28.2
+//   Plugins
+//     atp:                      1.0.0
+//     origen_doc_helpers:       0.5.2
+//     origen_testers:           0.15.0
+//     origen_updater:           0.7.0
+// ***************************************************************************
+import tset tp0;                                                                                
+svm_only_file = no;                                                                             
+opcode_mode = extended;                                                                         
+compressed = yes;                                                                               
+                                                                                                
+vector ($tset, sclk, mosi, miso, ss)                                                            
+{                                                                                               
+start_label pattern_st:                                                                         
+//                                                                                              s m m s
+//                                                                                              c o i s
+//                                                                                              l s s  
+//                                                                                              k i o  
+                                                                 > tp0                          0 0 X 1 ;
+// OrigenSpi::Driver - Issue a clock cycle
+                                                                 > tp0                          1 0 X 1 ;
+                                                                 > tp0                          0 0 X 1 ;
+// change multiple to 2
+// OrigenSpi::Driver - Issue a clock cycle
+                                                                 > tp0                          0 0 X 1 ;
+                                                                 > tp0                          1 0 X 1 ;
+                                                                 > tp0                          0 0 X 1 ;
+// change multiple to 80
+// OrigenSpi::Driver - Issue a clock cycle
+repeat 40                                                        > tp0                          0 0 X 1 ;
+repeat 40                                                        > tp0                          1 0 X 1 ;
+                                                                 > tp0                          0 0 X 1 ;
+// change clock format and repeat
+// OrigenSpi::Driver - Issue a clock cycle
+                                                                 > tp0                          0 0 X 1 ;
+                                                                 > tp0                          1 0 X 1 ;
+// change multiple to 2
+// OrigenSpi::Driver - Issue a clock cycle
+                                                                 > tp0                          1 0 X 1 ;
+                                                                 > tp0                          0 0 X 1 ;
+                                                                 > tp0                          1 0 X 1 ;
+// change multiple to 80
+// OrigenSpi::Driver - Issue a clock cycle
+repeat 40                                                        > tp0                          1 0 X 1 ;
+repeat 40                                                        > tp0                          0 0 X 1 ;
+                                                                 > tp0                          1 0 X 1 ;
+// ######################################################################
+// ## Pattern complete
+// ######################################################################
+end_module                                                       > tp0                          1 0 X 1 ;
+}                                                                                               

@@ -29,40 +29,36 @@ when "tags"
 
 ## Example of how to make a command to run unit tests, this simply invokes RSpec on
 ## the spec directory
-#when "specs"
-#  require "rspec"
-#  exit RSpec::Core::Runner.run(['spec'])
+when "specs"
+  require "rspec"
+  exit RSpec::Core::Runner.run(['spec'])
 
 ## Example of how to make a command to run diff-based tests
-#when "examples", "test"
-#  Origen.load_application
-#  status = 0
-#
-#  # Compiler tests
-#  ARGV = %w(templates/example.txt.erb -t debug -r approved)
-#  load "origen/commands/compile.rb"
-#  # Pattern generator tests
-#  #ARGV = %w(some_pattern -t debug -r approved)
-#  #load "#{Origen.top}/lib/origen/commands/generate.rb"
-#
-#  if Origen.app.stats.changed_files == 0 &&
-#     Origen.app.stats.new_files == 0 &&
-#     Origen.app.stats.changed_patterns == 0 &&
-#     Origen.app.stats.new_patterns == 0
-#
-#    Origen.app.stats.report_pass
-#  else
-#    Origen.app.stats.report_fail
-#    status = 1
-#  end
-#  puts
-#  if @command == "test"
-#    Origen.app.unload_target!
-#    require "rspec"
-#    result = RSpec::Core::Runner.run(['spec'])
-#    status = status == 1 ? 1 : result
-#  end
-#  exit status  # Exit with a 1 on the event of a failure per std unix result codes
+when "examples", "test"
+  Origen.load_application
+  status = 0
+
+  ARGV = %w(pattern/clock_test.rb -t default.rb -e default.rb -r approved)
+  load "#{Origen.top}/lib/origen/commands/generate.rb"#  #ARGV = %w(some_pattern -t debug -r approved)
+
+  if Origen.app.stats.changed_files == 0 &&
+     Origen.app.stats.new_files == 0 &&
+     Origen.app.stats.changed_patterns == 0 &&
+     Origen.app.stats.new_patterns == 0
+
+    Origen.app.stats.report_pass
+  else
+    Origen.app.stats.report_fail
+    status = 1
+  end
+  puts
+  if @command == "test"
+    Origen.app.unload_target!
+    require "rspec"
+    result = RSpec::Core::Runner.run(['spec'])
+    status = status == 1 ? 1 : result
+  end
+  exit status  # Exit with a 1 on the event of a failure per std unix result codes
 
 # Always leave an else clause to allow control to fall back through to the
 # Origen command handler.
