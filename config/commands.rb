@@ -41,6 +41,9 @@ when "examples", "test"
   ARGV = %w(pattern/clock_test.rb -t default.rb -e default.rb -r approved)
   load "#{Origen.top}/lib/origen/commands/generate.rb"#  #ARGV = %w(some_pattern -t debug -r approved)
 
+  ARGV = %w(pattern/shift_test.rb -t default.rb -e default.rb -r approved)
+  load "#{Origen.top}/lib/origen/commands/generate.rb"#  #ARGV = %w(some_pattern -t debug -r approved)
+
   if Origen.app.stats.changed_files == 0 &&
      Origen.app.stats.new_files == 0 &&
      Origen.app.stats.changed_patterns == 0 &&

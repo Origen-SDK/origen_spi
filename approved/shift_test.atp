@@ -1,0 +1,167 @@
+// ***************************************************************************
+// GENERATED:
+//   Time:    17-Dec-2017 14:47PM
+//   By:      Paul DeRouen
+//   Command: origen g pattern\shift_test.rb -t default.rb -e default.rb
+// ***************************************************************************
+// ENVIRONMENT:
+//   Application
+//     Source:    https://github.com/Origen-SDK/origen_spi.git
+//     Version:   0.1.0
+//     Branch:    master(3a29e3273d8) (+local edits)
+//   Origen
+//     Source:    https://github.com/Origen-SDK/origen
+//     Version:   0.28.2
+//   Plugins
+//     atp:                      1.0.0
+//     origen_doc_helpers:       0.5.2
+//     origen_testers:           0.15.0
+//     origen_updater:           0.7.0
+// ***************************************************************************
+import tset tp0;                                                                                
+svm_only_file = no;                                                                             
+opcode_mode = extended;                                                                         
+compressed = yes;                                                                               
+                                                                                                
+vector ($tset, sclk, mosi, miso, ss)                                                            
+{                                                                                               
+start_label pattern_st:                                                                         
+//                                                                                              s m m s
+//                                                                                              c o i s
+//                                                                                              l s s  
+//                                                                                              k i o  
+                                                                 > tp0                          0 0 X 1 ;
+// shifting 12-bits lsb first, 0x7 out, 0x5a5 in
+                                                                 > tp0                          1 1 H 0 ;
+                                                                 > tp0                          1 1 L 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+repeat 2                                                         > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+repeat 2                                                         > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+                                                                 > tp0                          0 0 X 1 ;
+// repeat 12-bits lsb first, 0x7 out, 0x5a5 in; clock multiple = 4
+                                                                 > tp0                          0 1 H 0 ;
+                                                                 > tp0                          0 1 X 0 ;
+repeat 2                                                         > tp0                          1 1 X 0 ;
+                                                                 > tp0                          0 1 L 0 ;
+                                                                 > tp0                          0 1 X 0 ;
+repeat 2                                                         > tp0                          1 1 X 0 ;
+                                                                 > tp0                          0 1 H 0 ;
+                                                                 > tp0                          0 1 X 0 ;
+repeat 2                                                         > tp0                          1 1 X 0 ;
+                                                                 > tp0                          0 0 L 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          1 0 X 0 ;
+                                                                 > tp0                          0 0 L 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          1 0 X 0 ;
+                                                                 > tp0                          0 0 H 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          1 0 X 0 ;
+                                                                 > tp0                          0 0 L 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          1 0 X 0 ;
+                                                                 > tp0                          0 0 H 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          1 0 X 0 ;
+                                                                 > tp0                          0 0 H 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          1 0 X 0 ;
+                                                                 > tp0                          0 0 L 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          1 0 X 0 ;
+                                                                 > tp0                          0 0 H 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          1 0 X 0 ;
+                                                                 > tp0                          0 0 L 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          1 0 X 0 ;
+                                                                 > tp0                          0 0 X 1 ;
+// repeat 12-bits, 0x7 out, 0x5a5 in; clock multiple = 4, with msb first, move miso compare to cycle 3
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+repeat 2                                                         > tp0                          0 1 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+repeat 2                                                         > tp0                          0 1 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 1 L 0 ;
+repeat 2                                                         > tp0                          0 1 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+                                                                 > tp0                          0 0 X 1 ;
+// Now check bit masking
+// shift 0xa5a, 12-bits, msb first, multiple = 1, clk format :rh, all bits masked
+                                                                 > tp0                          0 1 X 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+                                                                 > tp0                          0 1 X 0 ;
+repeat 2                                                         > tp0                          0 0 X 0 ;
+                                                                 > tp0                          0 1 X 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+repeat 2                                                         > tp0                          0 1 X 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+                                                                 > tp0                          0 1 X 0 ;
+                                                                 > tp0                          0 0 X 0 ;
+                                                                 > tp0                          1 0 X 1 ;
+// repeat same, comparing for LLLL_XXXX_HHHH, clock back to :rl
+                                                                 > tp0                          1 1 L 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 1 L 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          0 0 X 1 ;
+// test capture
+                                                                 > tp0                          1 1 L 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 1 L 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+stv                                                              > tp0                          1 0 X 0 ;
+stv                                                              > tp0                          1 1 X 0 ;
+stv                                                              > tp0                          1 0 X 0 ;
+stv                                                              > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          0 0 X 1 ;
+// ######################################################################
+// ## Pattern complete
+// ######################################################################
+end_module                                                       > tp0                          0 0 X 1 ;
+}                                                                                               

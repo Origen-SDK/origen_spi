@@ -214,16 +214,14 @@ module OrigenSpi
     # Run a spi clock cycle
     #
     # This method can be used to clock the spi port without specifying shift data
-    def clock_cycle
+    def sclk_cycle
       validate_settings
       cc 'OrigenSpi::Driver - Issue a clock cycle'
       @sclk_pin.restore_state do
         @sclk_pin.drive @clk_format == :rl ? 0 : 1
         @half_cycle.times { tester.cycle }
         @sclk_pin.drive @clk_format == :rl ? 1 : 0
-        @half_cycle.times { tester.cycle }
-        # ensure at least 1 cycles is issued
-        tester.cycle if @clk_multiple == 1
+        @half_cycle.upto(@clk_multiple - 1) { tester.cycle }
       end
     end
 
@@ -254,7 +252,7 @@ module OrigenSpi
       end
 
       # set ss active
-      @ss_pin.drive @ss_active
+      @ss_pin.drive @ss_active unless @ss_pin.nil?
 
       # apply wait time if requested
       tester.wait @clk_wait_time unless @clk_wait_time == { time_in_us: 0 }
@@ -263,49 +261,61 @@ module OrigenSpi
       0.upto(out_reg.size - 1) do |bit|
         # park the clock
         @sclk_pin.drive @clk_format == :rl ? 0 : 1
-        @miso_pin.dont_care
+        @miso_pin.dont_care unless @miso_pin.nil?
 
         # setup the bit to be driven, prep for overlay if requested
-        @mosi_pin.drive out_reg.bits[bit].data
         overlay_options = {}
-        if out_reg.bits[bit].has_overlay?
-          overlay_options[:pins] = @mosi_pin
-          overlay_options[:overlay_str] = out_reg.bits[bit].overlay_str
+        unless @mosi_pin.nil?
+          @mosi_pin.drive out_reg[bit].data
+          if out_reg[bit].has_overlay?
+            overlay_options[:pins] = @mosi_pin
+            overlay_options[:overlay_str] = out_reg[bit].overlay_str
+          end
         end
 
         # advance to clock active edge
-        @half_cycle.times do
-          overlay_options == {} ? tester.cycle : (tester.cycle overlay: overlay_options)
+        @half_cycle.times do |c|
+          handle_miso c, in_reg[bit]
+          cycle
           overlay_options[:change_data] = false unless overlay_options == {}
         end
 
         # drive the clock to active
         @sclk_pin.drive @clk_format == :rl ? 1 : 0
 
-        # advance to the end of the cycle checking for appropriate miso compare placement
-        @half_cycle.times do |c|
-          if (c + @half_cycle) == @miso_compare_cycle
-            @miso_pin.assert in_reg.bits[bit].data if in_reg.bits[bit].is_to_be_read?
-            tester.store_next_cycle @miso_pin if in_reg.bits[bit].is_to_be_stored?
-          else
-            @miso_pin.dont_care
-          end
-          overlay_options == {} ? tester.cycle : (tester.cycle overlay: overlay_options)
-        end
-
-        # ensure at least 1 tester cycle is generated
-        if @clk_multiple == 1
-          @miso_pin.assert in_reg.bits[bit].data if in_reg.bits[bit].is_to_be_read?
-          tester.store_next_cycle @miso_pin if in_reg.bits[bit].is_to_be_stored?
-          overlay_options == {} ? tester.cycle : (tester.cycle overlay: overlay_options)
+        # advance to the end of the sclk cycle checking for appropriate miso compare placement
+        @half_cycle.upto(@clk_multiple - 1) do |c|
+          handle_miso c, in_reg[bit]
+          cycle
         end
       end
 
       # park the clock, mask miso, clear ss
       @sclk_pin.drive @clk_format == :rl ? 0 : 1
-      @miso_pin.dont_care
-      @mosi_pin.drive 0
-      @ss_pin.drive @ss_active == 1 ? 0 : 1
+      @miso_pin.dont_care unless @miso_pin.nil?
+      @mosi_pin.drive 0 unless @mosi_pin.nil?
+      @ss_pin.drive @ss_active == 1 ? 0 : 1 unless @ss_pin.nil?
+    end
+
+    # Internal method
+    #
+    # Set the state of miso
+    def handle_miso(c, bit)
+      unless @miso_pin.nil?
+        if c == @miso_compare_cycle
+          @miso_pin.assert bit.data if bit.is_to_be_read?
+          tester.store_next_cycle @miso_pin if bit.is_to_be_stored?
+        else
+          @miso_pin.dont_care
+        end
+      end
+    end
+    
+    # Internal method
+    #
+    # Issue a tester cycle, conditionally with overlay options supplied
+    def cycle(overlay_options = {})
+      overlay_options == {} ? tester.cycle : (tester.cycle overlay: overlay_options)
     end
 
     # Build the shift out packet
