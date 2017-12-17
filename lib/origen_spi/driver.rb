@@ -1,7 +1,7 @@
 module OrigenSpi
   class Driver
     include Origen::Model
-  
+
     # Dut pin that serves as the spi clock
     # @example
     #   spi_instance.sclk_pin = dut.pin(:p1)
@@ -92,7 +92,7 @@ module OrigenSpi
         ss_pin:        nil,
         clk_format:    :nr,
         ss_active:     0,
-        clk_wait_time: { time_in_s: 0 },
+        clk_wait_time: { time_in_us: 0 },
         clk_multiple:  2,
         data_order:    :msb0
       }.merge(options)
@@ -219,9 +219,9 @@ module OrigenSpi
       cc 'OrigenSpi::Driver - Issue a clock cycle'
       @sclk_pin.restore_state do
         @sclk_pin.drive @clk_format == :rl ? 0 : 1
-        @half_cycle.times { tester.cycle } unless @half_cycle == 0
+        @half_cycle.times { tester.cycle }
         @sclk_pin.drive @clk_format == :rl ? 1 : 0
-        @half_cycle.times { tester.cycle } unless @half_cycle == 0
+        @half_cycle.times { tester.cycle }
         # ensure at least 1 cycles is issued
         tester.cycle if @clk_multiple == 1
       end
@@ -244,10 +244,68 @@ module OrigenSpi
 
       validate_settings
       options = validate_options(options)
-      out_reg = build_output_packet(options)
-      in_reg = build_input_packet(options)
-      
+      out_reg = build_output_packet(options).bits
+      in_reg = build_input_packet(options).bits
+
+      # reverse bit order if :msb0
+      if @data_order == :msb0
+        out_reg = out_reg.reverse
+        in_reg = in_reg.reverse
+      end
+
+      # set ss active
+      @ss_pin.drive @ss_active
+
+      # apply wait time if requested
+      tester.wait @clk_wait_time unless @clk_wait_time == { time_in_us: 0 }
+
       # now do the shifting
+      0.upto(out_reg.size - 1) do |bit|
+        # park the clock
+        @sclk_pin.drive @clk_format == :rl ? 0 : 1
+        @miso_pin.dont_care
+
+        # setup the bit to be driven, prep for overlay if requested
+        @mosi_pin.drive out_reg.bits[bit].data
+        overlay_options = {}
+        if out_reg.bits[bit].has_overlay?
+          overlay_options[:pins] = @mosi_pin
+          overlay_options[:overlay_str] = out_reg.bits[bit].overlay_str
+        end
+
+        # advance to clock active edge
+        @half_cycle.times do
+          overlay_options == {} ? tester.cycle : (tester.cycle overlay: overlay_options)
+          overlay_options[:change_data] = false unless overlay_options == {}
+        end
+
+        # drive the clock to active
+        @sclk_pin.drive @clk_format == :rl ? 1 : 0
+
+        # advance to the end of the cycle checking for appropriate miso compare placement
+        @half_cycle.times do |c|
+          if (c + @half_cycle) == @miso_compare_cycle
+            @miso_pin.assert in_reg.bits[bit].data if in_reg.bits[bit].is_to_be_read?
+            tester.store_next_cycle @miso_pin if in_reg.bits[bit].is_to_be_stored?
+          else
+            @miso_pin.dont_care
+          end
+          overlay_options == {} ? tester.cycle : (tester.cycle overlay: overlay_options)
+        end
+
+        # ensure at least 1 tester cycle is generated
+        if @clk_multiple == 1
+          @miso_pin.assert in_reg.bits[bit].data if in_reg.bits[bit].is_to_be_read?
+          tester.store_next_cycle @miso_pin if in_reg.bits[bit].is_to_be_stored?
+          overlay_options == {} ? tester.cycle : (tester.cycle overlay: overlay_options)
+        end
+      end
+
+      # park the clock, mask miso, clear ss
+      @sclk_pin.drive @clk_format == :rl ? 0 : 1
+      @miso_pin.dont_care
+      @mosi_pin.drive 0
+      @ss_pin.drive @ss_active == 1 ? 0 : 1
     end
 
     # Build the shift out packet
@@ -278,7 +336,7 @@ module OrigenSpi
       end
       in_reg
     end
-    
+
     # Internal method that logs errors in options passed to the shift method
     def validate_options(options)
       # check that size of the packet can be determined
