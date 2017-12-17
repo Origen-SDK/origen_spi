@@ -310,7 +310,7 @@ module OrigenSpi
         end
       end
     end
-    
+
     # Internal method
     #
     # Issue a tester cycle, conditionally with overlay options supplied
