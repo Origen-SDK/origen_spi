@@ -276,7 +276,7 @@ module OrigenSpi
         # advance to clock active edge
         @half_cycle.times do |c|
           handle_miso c, in_reg[bit]
-          cycle
+          cycle overlay_options
           overlay_options[:change_data] = false unless overlay_options == {}
         end
 
@@ -286,7 +286,7 @@ module OrigenSpi
         # advance to the end of the sclk cycle checking for appropriate miso compare placement
         @half_cycle.upto(@clk_multiple - 1) do |c|
           handle_miso c, in_reg[bit]
-          cycle
+          cycle overlay_options
         end
       end
 

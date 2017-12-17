@@ -1,0 +1,51 @@
+// ***************************************************************************
+// GENERATED:
+//   Time:    17-Dec-2017 15:19PM
+//   By:      Paul DeRouen
+//   Command: origen g pattern\overlay_test.rb -t default.rb -e default.rb
+// ***************************************************************************
+// ENVIRONMENT:
+//   Application
+//     Source:    https://github.com/Origen-SDK/origen_spi.git
+//     Version:   0.1.0
+//     Branch:    master(7ffc3b8ebc9) (+local edits)
+//   Origen
+//     Source:    https://github.com/Origen-SDK/origen
+//     Version:   0.28.2
+//   Plugins
+//     atp:                      1.0.0
+//     origen_doc_helpers:       0.5.2
+//     origen_testers:           0.15.0
+//     origen_updater:           0.7.0
+// ***************************************************************************
+import tset tp0;                                                                                
+svm_only_file = no;                                                                             
+opcode_mode = extended;                                                                         
+compressed = yes;                                                                               
+                                                                                                
+vector ($tset, sclk, mosi, miso, ss)                                                            
+{                                                                                               
+start_label pattern_st:                                                                         
+//                                                                                              s m m s
+//                                                                                              c o i s
+//                                                                                              l s s  
+//                                                                                              k i o  
+                                                                 > tp0                          0 0 X 1 ;
+heres_the_label:                                                                                
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 0 X 0 ;
+repeat 8                                                         > tp0                          1 0 X 0 ;
+// repeat test reversing bit order
+repeat 8                                                         > tp0                          1 0 X 0 ;
+heres_the_other_label:                                                                          
+                                                                 > tp0                          1 0 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+                                                                 > tp0                          1 1 X 0 ;
+// ######################################################################
+// ## Pattern complete
+// ######################################################################
+end_module                                                       > tp0                          0 0 X 1 ;
+}                                                                                               
