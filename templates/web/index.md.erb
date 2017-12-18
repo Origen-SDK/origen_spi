@@ -56,6 +56,25 @@ can be changed after instantiation. See API for more details.
   dut.spi.ss_pin = nil
 ~~~
 
+Once the driver is instantiated shift operations can be performed by calls to the shift method (overlay/store/masking etc. is handled):
+
+~~~ruby
+  # shift out, masking input compares
+  dut.spi.shift master_out: 0xFF, size: 32
+  
+  # shift out, register - size doesn't need to be passed when register is provided
+  dut.spi.shift master_out: dut.my_reg
+  
+  # shift in read examples:
+  dut.spi.shift master_in: 0xFF, size: 32
+  
+  # provide a register to mask or store (mark the bits appropriately)
+  dut.spi.shift master_in: dut.my_reg
+  
+  # simultaneous shift in/out
+  dut.spi.shift master_out: some_value_or_reg, master_in: some_other_value_or_reg
+~~~
+
 
 ### How To Setup a Development Environment
 
