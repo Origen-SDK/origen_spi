@@ -27,7 +27,7 @@ module OrigenSpi
     # clock format
     #
     # available options are:
-    #   :rl   # return low
+    #   :rl   # return low - data changes while sclk is low, latches on rising edge
     #   :rh   # return high
     #
     # @example
@@ -58,7 +58,7 @@ module OrigenSpi
     # data order
     #
     # available options are:
-    #   :msb0
+    #   :msb0 - MSB is shifted first
     #   :lsb0
     #
     # @example
@@ -181,10 +181,6 @@ module OrigenSpi
         unless @sclk_pin.is_a?(Origen::Pins::Pin)
           settings_valid = false
           Origen.log.error 'OrigenSpi::Driver.sclk_pin must be an Origen pin object'
-        end
-        unless @miso_pin.is_a?(Origen::Pins::Pin)
-          settings_valid = false
-          Origen.log.error 'OrigenSpi::Driver.miso_pin must be an Origen pin object'
         end
 
         unless @clk_format == :rl || @clk_format == :rh
