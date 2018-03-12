@@ -1,0 +1,64 @@
+// ***************************************************************************
+// GENERATED:
+//   Time:    12-Mar-2018 08:16AM
+//   By:      FSL\b04525
+//   Command: origen g .\pattern\keep_ss_active.rb -t default.rb -e default.rb
+// ***************************************************************************
+// ENVIRONMENT:
+//   Application
+//     Source:    https://github.com/Origen-SDK/origen_spi.git
+//     Version:   0.1.0
+//     Branch:    AddShiftOption(5399c727d95)
+//   Origen
+//     Source:    https://github.com/Origen-SDK/origen
+//     Version:   0.28.2
+//   Plugins
+//     atp:                      1.0.0
+//     origen_doc_helpers:       0.5.2
+//     origen_testers:           0.15.0
+//     origen_updater:           0.7.0
+// ***************************************************************************
+import tset tp0;                                                                                
+svm_only_file = no;                                                                             
+opcode_mode = extended;                                                                         
+compressed = yes;                                                                               
+                                                                                                
+vector ($tset, sclk, mosi, miso, ss)                                                            
+{                                                                                               
+start_label pattern_st:                                                                         
+//                                                                                              s m m s
+//                                                                                              c o i s
+//                                                                                              l s s  
+//                                                                                              k i o  
+                                                                 > tp0                          0 0 X 1 ;
+// shifting 12-bits lsb first, 0x7 out, 0x5a5 in -- keeping ss active
+                                                                 > tp0                          1 1 H 0 ;
+                                                                 > tp0                          1 1 L 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+repeat 2                                                         > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+repeat 2                                                         > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+// cycle with ss active
+                                                                 > tp0                          0 0 X 0 ;
+// shifting 12-bits lsb first, 0x7 out, 0x5a5 in -- allow ss inactive
+                                                                 > tp0                          1 1 H 0 ;
+                                                                 > tp0                          1 1 L 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+repeat 2                                                         > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+repeat 2                                                         > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+// cycle with ss inactive
+                                                                 > tp0                          0 0 X 1 ;
+// ######################################################################
+// ## Pattern complete
+// ######################################################################
+end_module                                                       > tp0                          0 0 X 1 ;
+}                                                                                               

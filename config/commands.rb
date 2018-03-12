@@ -39,13 +39,16 @@ when "examples", "test"
   status = 0
 
   ARGV = %w(pattern/clock_test.rb -t default.rb -e default.rb -r approved)
-  load "#{Origen.top}/lib/origen/commands/generate.rb"#  #ARGV = %w(some_pattern -t debug -r approved)
+  load "#{Origen.top}/lib/origen/commands/generate.rb"
 
   ARGV = %w(pattern/shift_test.rb -t default.rb -e default.rb -r approved)
-  load "#{Origen.top}/lib/origen/commands/generate.rb"#  #ARGV = %w(some_pattern -t debug -r approved)
+  load "#{Origen.top}/lib/origen/commands/generate.rb"
 
   ARGV = %w(pattern/overlay_test.rb -t default.rb -e default.rb -r approved)
-  load "#{Origen.top}/lib/origen/commands/generate.rb"#  #ARGV = %w(some_pattern -t debug -r approved)
+  load "#{Origen.top}/lib/origen/commands/generate.rb"
+
+  ARGV = %w(pattern/keep_ss_active.rb -t default.rb -e default.rb -r approved)
+  load "#{Origen.top}/lib/origen/commands/generate.rb"
 
   if Origen.app.stats.changed_files == 0 &&
      Origen.app.stats.new_files == 0 &&

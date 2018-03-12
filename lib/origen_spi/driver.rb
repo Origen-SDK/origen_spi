@@ -233,7 +233,8 @@ module OrigenSpi
     #   spi_instance.shift master_in: in_cmp_reg
     def shift(options = {})
       options = {
-        master_out: 0
+        master_out:     0,
+        keep_ss_active: false
       }.merge(options)
 
       validate_settings
@@ -290,7 +291,7 @@ module OrigenSpi
       @sclk_pin.drive @clk_format == :rl ? 0 : 1
       @miso_pin.dont_care unless @miso_pin.nil?
       @mosi_pin.drive 0 unless @mosi_pin.nil?
-      @ss_pin.drive @ss_active == 1 ? 0 : 1 unless @ss_pin.nil?
+      @ss_pin.drive @ss_active == 1 ? 0 : 1 unless @ss_pin.nil? || options[:keep_ss_active]
     end
 
     # Internal method
