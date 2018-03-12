@@ -233,7 +233,7 @@ module OrigenSpi
     #   spi_instance.shift master_in: in_cmp_reg
     def shift(options = {})
       options = {
-        master_out: 0,
+        master_out:     0,
         keep_ss_active: false
       }.merge(options)
 
