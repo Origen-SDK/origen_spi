@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative '..\lib\origen_spi\driver'
+require_relative "#{Origen.root!}/lib/origen_spi/driver"
 
 describe OrigenSpi::Driver do
   class TestDUT
