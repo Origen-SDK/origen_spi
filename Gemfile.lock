@@ -64,6 +64,8 @@ GEM
       cri (~> 2.3)
     nesty (1.0.2)
     net-ldap (0.16.1)
+    nokogiri (1.7.2)
+      mini_portile2 (~> 2.1.0)
     nokogiri (1.7.2-x64-mingw32)
       mini_portile2 (~> 2.1.0)
     origen (0.28.2)
@@ -158,6 +160,7 @@ GEM
     yard (0.9.12)
 
 PLATFORMS
+  ruby
   x64-mingw32
 
 DEPENDENCIES
@@ -169,4 +172,4 @@ DEPENDENCIES
   ripper-tags
 
 BUNDLED WITH
-   1.15.4
+   1.16.1
