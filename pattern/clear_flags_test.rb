@@ -9,17 +9,10 @@ Pattern.create do
 
   out_data = Origen::Registers::Reg.dummy(12).write 7
   in_data = Origen::Registers::Reg.dummy(12).read 0x5a5
-  cc 'shifting 12-bits lsb first, 0x7 out, 0x5a5 in -- keeping ss active'
-  dut.spi.shift master_out: out_data, master_in: in_data, keep_ss_active: true
-  
-  cc 'cycle with ss active'
-  tester.cycle
-
-  cc 'shifting 12-bits lsb first, 0x7 out, 0x5a5 in -- allow ss inactive'
-  in_data.read
+  cc 'shifting 12-bits lsb first, 0x7 out, 0x5a5 in'
   dut.spi.shift master_out: out_data, master_in: in_data
-  
-  cc 'cycle with ss inactive'
-  tester.cycle
 
+  tester.cycle
+  cc 'shifting in same register, should be no compares'
+  dut.spi.shift master_in: in_data
 end

@@ -292,6 +292,10 @@ module OrigenSpi
       @miso_pin.dont_care unless @miso_pin.nil?
       @mosi_pin.drive 0 unless @mosi_pin.nil?
       @ss_pin.drive @ss_active == 1 ? 0 : 1 unless @ss_pin.nil? || options[:keep_ss_active]
+
+      # clear flags if registers were provided
+      options[:master_out].clear_flags if options[:master_out].respond_to?(:clear_flags)
+      options[:master_in].clear_flags if options[:master_in].respond_to?(:clear_flags)
     end
 
     # Internal method
