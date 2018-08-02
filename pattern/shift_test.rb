@@ -15,12 +15,16 @@ Pattern.create do
   tester.cycle
   
   cc 'repeat 12-bits lsb first, 0x7 out, 0x5a5 in; clock multiple = 4'
+  out_data.write 7
+  in_data.read 0x5a5
   dut.spi.clk_multiple = 4
   dut.spi.shift master_out: out_data, master_in: in_data
   
   tester.cycle
   
   cc 'repeat 12-bits, 0x7 out, 0x5a5 in; clock multiple = 4, with msb first, move miso compare to cycle 3'
+  out_data.write 7
+  in_data.read 0x5a5
   dut.spi.data_order = :msb0
   dut.spi.miso_compare_cycle = 3
   dut.spi.shift master_out: out_data, master_in: in_data
@@ -46,7 +50,9 @@ Pattern.create do
   tester.cycle
   
   cc 'test capture'
+  in_data.bits[11..8].read
   in_data.bits[7..4].store
+  in_data.bits[3..0].read
   dut.spi.shift master_out: 0xa5a, master_in: in_data
   
   tester.cycle

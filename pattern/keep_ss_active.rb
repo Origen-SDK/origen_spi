@@ -16,6 +16,7 @@ Pattern.create do
   tester.cycle
 
   cc 'shifting 12-bits lsb first, 0x7 out, 0x5a5 in -- allow ss inactive'
+  in_data.read
   dut.spi.shift master_out: out_data, master_in: in_data
   
   cc 'cycle with ss inactive'
