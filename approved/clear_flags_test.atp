@@ -1,0 +1,52 @@
+// ***************************************************************************
+// GENERATED:
+//   Time:    02-Aug-2018 09:50AM
+//   By:      Paul DeRouen
+//   Command: origen g .\pattern\clear_flags_test.rb -t default.rb -e default.rb
+// ***************************************************************************
+// ENVIRONMENT:
+//   Application
+//     Source:    https://github.com/Origen-SDK/origen_spi.git
+//     Version:   0.1.0
+//     Branch:    ClearFlags(9fcc3c7ecf9) (+local edits)
+//   Origen
+//     Source:    https://github.com/Origen-SDK/origen
+//     Version:   0.28.2
+//   Plugins
+//     atp:                      1.0.0
+//     origen_doc_helpers:       0.5.2
+//     origen_testers:           0.15.0
+//     origen_updater:           0.7.0
+// ***************************************************************************
+import tset tp0;                                                                                
+svm_only_file = no;                                                                             
+opcode_mode = extended;                                                                         
+compressed = yes;                                                                               
+                                                                                                
+vector ($tset, sclk, mosi, miso, ss)                                                            
+{                                                                                               
+start_label pattern_st:                                                                         
+//                                                                                              s m m s
+//                                                                                              c o i s
+//                                                                                              l s s  
+//                                                                                              k i o  
+                                                                 > tp0                          0 0 X 1 ;
+// shifting 12-bits lsb first, 0x7 out, 0x5a5 in
+                                                                 > tp0                          1 1 H 0 ;
+                                                                 > tp0                          1 1 L 0 ;
+                                                                 > tp0                          1 1 H 0 ;
+repeat 2                                                         > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+repeat 2                                                         > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+                                                                 > tp0                          1 0 H 0 ;
+                                                                 > tp0                          1 0 L 0 ;
+                                                                 > tp0                          0 0 X 1 ;
+// shifting in same register, should be no compares
+repeat 12                                                        > tp0                          1 0 X 0 ;
+// ######################################################################
+// ## Pattern complete
+// ######################################################################
+end_module                                                       > tp0                          0 0 X 1 ;
+}                                                                                               
