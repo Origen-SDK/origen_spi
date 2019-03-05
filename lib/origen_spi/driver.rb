@@ -256,6 +256,13 @@ module OrigenSpi
 
       # now do the shifting
       0.upto(out_reg.size - 1) do |bit|
+        # note which bit this is
+        if @data_order == :msb0
+          thisbit = out_reg.size - 1 - bit
+        else
+          thisbit = bit
+        end
+
         # park the clock
         @sclk_pin.drive @clk_format == :rl ? 0 : 1
         @miso_pin.dont_care unless @miso_pin.nil?
@@ -272,7 +279,7 @@ module OrigenSpi
 
         # advance to clock active edge
         @half_cycle.times do |c|
-          handle_miso c, in_reg[bit]
+          handle_miso c, in_reg[bit], thisbit
           cycle overlay_options
           overlay_options[:change_data] = false unless overlay_options == {}
         end
@@ -282,7 +289,7 @@ module OrigenSpi
 
         # advance to the end of the sclk cycle checking for appropriate miso compare placement
         @half_cycle.upto(@clk_multiple - 1) do |c|
-          handle_miso c, in_reg[bit]
+          handle_miso c, in_reg[bit], thisbit
           cycle overlay_options
         end
       end
@@ -301,10 +308,10 @@ module OrigenSpi
     # Internal method
     #
     # Set the state of miso
-    def handle_miso(c, bit)
+    def handle_miso(c, bit, bit_number)
       unless @miso_pin.nil?
         if c == @miso_compare_cycle
-          @miso_pin.assert bit.data if bit.is_to_be_read?
+          @miso_pin.assert bit.data, meta: { position: bit_number } if bit.is_to_be_read?
           tester.store_next_cycle @miso_pin if bit.is_to_be_stored?
         else
           @miso_pin.dont_care
