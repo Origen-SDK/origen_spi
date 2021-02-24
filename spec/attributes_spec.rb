@@ -62,4 +62,32 @@ describe OrigenSpi::Driver do
     spi_ins.settings_validated.should == false
   end
 
+  specify 'pin names rather than pin instances can be used' do
+    Origen.target.temporary = -> { TestDUT.new; OrigenTesters::J750.new }
+    Origen.target.load!
+    settings = {
+      sclk_pin: :sclk,
+      mosi_pin: :mosi,
+      miso_pin: :miso,
+      ss_pin: :ss,
+      clk_format: :rl,
+      ss_active: 0,
+      clk_multiple: 1,
+      data_order: :lsb0
+    }
+
+    spi_ins = OrigenSpi::Driver.new(settings)
+    spi_ins.validate_settings
+    spi_ins.settings_validated.should == true
+
+    spi_ins.sclk_pin.name.to_s.should == 'sclk'
+    spi_ins.mosi_pin.name.to_s.should == 'mosi'
+    spi_ins.miso_pin.name.to_s.should == 'miso'
+    spi_ins.ss_pin.name.to_s.should == 'ss'
+    spi_ins.clk_format.should == :rl
+    spi_ins.clk_multiple.should == 1
+    spi_ins.data_order.should == :lsb0
+    
+  end
+  
 end

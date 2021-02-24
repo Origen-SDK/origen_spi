@@ -177,6 +177,12 @@ module OrigenSpi
       unless @settings_validated
         settings_valid = true
 
+        # materialize pins
+        @sclk_pin = dut.pins(@sclk_pin) if @sclk_pin.is_a?(Symbol)
+        @mosi_pin = dut.pins(@mosi_pin) if @mosi_pin.is_a?(Symbol)
+        @miso_pin = dut.pins(@miso_pin) if @miso_pin.is_a?(Symbol)
+        @ss_pin = dut.pins(@ss_pin) if @ss_pin.is_a?(Symbol)
+        
         # check that clock and miso are provided
         unless @sclk_pin.is_a?(Origen::Pins::Pin)
           settings_valid = false
