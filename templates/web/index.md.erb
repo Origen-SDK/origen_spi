@@ -34,10 +34,10 @@ can be changed after instantiation. See API for more details.
 
 ~~~ruby
         sub_block :spi, class_name:   'OrigenSpi::Driver',
-                        sclk_pin:     dut.pin(:sclk),
-                        mosi_pin:     dut.pin(:mosi),
-                        miso_pin:     dut.pin(:miso),
-                        ss_pin:       dut.pin(:ss),
+                        sclk_pin:     :sclk,
+                        mosi_pin:     :mosi,
+                        miso_pin:     :miso,
+                        ss_pin:       :ss,
                         # :rl - return low - input data changes while sclk is low and is latched on rising edge
                         clk_format:   :rl,
                         # drive state of 0 activates the slave port

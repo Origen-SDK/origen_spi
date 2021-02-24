@@ -7,7 +7,8 @@ source 'https://rubygems.org'
 gem 'coveralls', require: false
 gem 'byebug', '<9.1.0' # This version restriction required if you need Ruby < 2.2, otherwise you can remove it
 gem 'ripper-tags'
-gem 'origen_doc_helpers'
+gem 'origen', '>= 0.59.8'
+gem 'origen_doc_helpers', '>= 0.8.3'
 gem 'origen_updater'
 # Uncomment these if you want to use a visual debugger (e.g. Visual Studio Code) to debug your app
 #gem 'ruby-debug-ide'
