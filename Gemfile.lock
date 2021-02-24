@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    origen_spi (0.2.0)
+    origen_spi (0.3.0)
       origen (>= 0.28.2)
       origen_testers (>= 0.15.0)
 
